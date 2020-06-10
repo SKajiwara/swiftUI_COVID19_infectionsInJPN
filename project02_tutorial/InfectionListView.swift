@@ -11,12 +11,24 @@ import Combine
  
 struct InfectionListView: View {
     @ObservedObject private var viewModel = InfectionListViewModel()
+    
+    @State private var showFavoriteOnly = false
+    
     var body: some View {
-        List(viewModel.infectionViewModels, id: \.self) { infectionViewModel in
-            Text(infectionViewModel.region + " - " + infectionViewModel.formattedInfectedCount)
-        }.onAppear {
-                self.viewModel.fetchInfections()
+        NavigationView {
+            VStack {
+                Toggle(isOn: $showFavoriteOnly) {
+                    Text("ブックマークした県のみ表示")
+                }.padding(.horizontal, 30)
+                List(viewModel.infectionViewModels, id: \.self) { infectionViewModel in
+                    Text(infectionViewModel.region + " - " + infectionViewModel.formattedInfectedCount)
+                }.onAppear {
+                        self.viewModel.fetchInfections()
+                }
+            }.navigationBarTitle("COVID19 Infections")
+            
         }
+        
     }
 }
 
@@ -37,16 +49,17 @@ class InfectionListViewModel: ObservableObject {
 }
  
 struct InfectionViewModel: Hashable {
-    private let infection: Infection
+    private var infection: Infection
     
     var region: String {
+
         return infection.region
     }
     var formattedInfectedCount: String {
         // Int -> String のフォーマティング
         return String(infection.infectedCount)
     }
-    
+   
     init(_ infection: Infection) {
         self.infection = infection
     }

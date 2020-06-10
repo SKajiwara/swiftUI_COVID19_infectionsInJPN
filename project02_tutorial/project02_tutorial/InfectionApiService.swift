@@ -45,5 +45,6 @@ struct InfectionDataContainer: Decodable {
 struct Infection: Decodable, Hashable {
     let region: String
     let infectedCount: Int
+    var isFavorite = false
 }
 
